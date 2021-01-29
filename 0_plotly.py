@@ -1,3 +1,5 @@
+# Code based on 'Learn how to create interactive plots and intelligent dashboards with Plotly, Python,
+# and the Dash library!' From JOSE PORTILLA.
 import numpy as np
 import pandas as pd
 import plotly.offline as pyo
