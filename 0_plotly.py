@@ -1,11 +1,11 @@
 # Code based on 'Learn how to create interactive plots and intelligent dashboards with Plotly, Python,
-# and the Dash library!' From JOSE PORTILLA.
+# and the Dash library!' From JOSE PORTILLA: https://github.com/Pierian-Data/Plotly-Dashboards-with-Dash
 import numpy as np
 import pandas as pd
 import plotly.offline as pyo
 import plotly.graph_objs as go
 import plotly.figure_factory as ff
-from plotly import tools
+from plotly.subplots import make_subplots
 
 justlast = True
 # SCATTER PLOT X and Y values  ----------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ x_values = np.linspace(0, 1, 100)  # 100 values from 0 to 1 equally spaced
 y_values = np.random.randn(100)
 
 # Create the data to plot
-trace0 = go.Scatter(x=x_values, y=y_values+5, mode='markers', name='mymarkers')
+trace0 = go.Scatter(x=x_values, y=y_values + 5, mode='markers', name='mymarkers')
 trace1 = go.Scatter(x=x_values, y=y_values, mode='lines', name='mylines')
-trace2 = go.Scatter(x=x_values, y=y_values-5, mode='lines+markers', name='both')
+trace2 = go.Scatter(x=x_values, y=y_values - 5, mode='lines+markers', name='both')
 data = [trace0, trace1, trace2]
 # Create a layout
 layout = go.Layout(title='Line Chart')
@@ -119,7 +119,7 @@ data = [go.Scatter(x=df['horsepower'],
                    text=df['name'],  # Extra info that will appear when you pla e the mouse on a point.
                    mode='markers',
                    # Since the 'cylinders' variable ios small, you add a factor two to make it visible
-                   marker=dict(size=2*df['cylinders'],
+                   marker=dict(size=2 * df['cylinders'],
                                color=df['weight'],
                                showscale=True))]  # This is the part where you make the marker size variable
 layout = go.Layout(title='Bubble Chart', hovermode='closest',
@@ -170,10 +170,10 @@ trace2 = go.Heatmap(
     x=df['year'],
     y=df['month'],
     z=df['passengers'])
-fig = tools.make_subplots(rows=1,
-                          cols=2,
-                          subplot_titles=['v1', 'v2'],
-                          shared_yaxes=True)  # Shate the same y-axis
+fig = make_subplots(rows=1,
+                    cols=2,
+                    subplot_titles=['v1', 'v2'],
+                    shared_yaxes=True)  # Shate the same y-axis
 fig.append_trace(trace1, 1, 1)  # append the plot numnber 1 in the subplot on raw=1 and col=1
 fig.append_trace(trace2, 1, 2)
 fig['layout'].update(title='HEAT MAP')

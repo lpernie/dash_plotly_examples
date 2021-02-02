@@ -1,5 +1,5 @@
 # Code based on 'Learn how to create interactive plots and intelligent dashboards with Plotly, Python,
-# and the Dash library!' From JOSE PORTILLA.
+# and the Dash library!' From JOSE PORTILLA. https://github.com/Pierian-Data/Plotly-Dashboards-with-Dash
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
@@ -7,8 +7,9 @@ import dash
 import dash_core_components as dcc  # Describes the individual graph (it can be also a button or a table)
 import dash_html_components as html  # Describes the layout of the page
 from dash.dependencies import Input, Output, State  # For callback interactivity (will be used by the decorators)
+import dash_auth
+# import requests  # To perform web-scraping
 import base64  # In order to import an image
-import requests  # To perform web-scraping
 
 # ---------------------------------------------------- Input Data ----------------------------------------------------
 # HEX color dictionary (for your convenience)
@@ -45,22 +46,24 @@ dfx3 = pd.DataFrame({'x': x2, 'y': y})
 dfx = pd.concat([dfx1, dfx2, dfx3])
 
 
-# -------------------------------------------------- END Input Data --------------------------------------------------
-
-
 # Encode an image to add into the dashboard
 def encode_image(image_file):
     encoded = base64.b64encode(open(image_file, 'rb').read())  # Read and image and encode it into a binary file.
     return 'data:image/png;base64,{}'.format(encoded.decode())  # This string is how html file can add an image.
 
 
-# You can print on the stdout the help menu for each method of dash
+# -----------------------------------    Start a Dash application    --------------------------------------------
+# NOTE: You can print on the stdout the help menu for each method of dash
 # print(help(html.Div))
 # print(help(html.H1))
-
-
-# Create a dash object
 app = dash.Dash()
+# Let's protect this dashboard
+# HTTP Authorization: free protocol to protect a dashboard. You store username-password in the code, but you have to
+#                     take care yourself of securely distribute those username-password to the users.
+# Plotly OAuth: authentication is mantained by Plotly, but you have to pay a subscription
+USERNAME_PWD = [['user1', '123'], ['user2', '456']]
+auth = dash_auth.BasicAuth(app, USERNAME_PWD)
+
 # Here you define the layout of your dashboard. You start with a Div: a container of spaces to use.
 app.layout = html.Div(children=[
     # ---- Interval: this part refresh automatically the page ----
@@ -196,7 +199,7 @@ app.layout = html.Div(children=[
                       figure={'data': [go.Scatter(x=df2['year'] + 1900,
                                                   y=df2['mpg'],
                                                   text=df2['name'],
-                                                  hoverinfo='text' + 'x' + 'y',  # What to display on overData
+                                                  hoverinfo='text + x + y',  # What to display on overData
                                                   mode='markers')],
                               'layout': go.Layout(title='MPG Data',
                                                   xaxis={'title': 'Model Year'},
@@ -322,13 +325,13 @@ def callback_graph(hover_data):
     figure = {'data': [go.Scatter(x=[0, 1],
                                   y=[0, 60 / df2.iloc[v_index]['acceleration']],  # Miles per minutes
                                   mode='lines',
-                                  line={'width': 2*df2.iloc[v_index]['cylinders']})],
+                                  line={'width': 2 * df2.iloc[v_index]['cylinders']})],
               'layout': go.Layout(title=df2.iloc[v_index]['name'],
                                   xaxis={'visible': False},
                                   yaxis={'visible': False,
                                          'range': [0, 60 / df2['acceleration'].min()]},
                                   margin={'l': 0},
-                                  height='300')}
+                                  height=300)}
     return figure
 
 
@@ -343,8 +346,6 @@ def callback_stats(hover_data):
     From 0 to 60 mph in {} seconds
     '''.format(df2.iloc[v_index]['cylinders'], df2.iloc[v_index]['displacement'], df2.iloc[v_index]['acceleration'])
     return stats
-
-# -------------------------------------------------- END Callbaks --------------------------------------------------
 
 
 if __name__ == '__main__':
